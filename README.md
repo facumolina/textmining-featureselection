@@ -13,9 +13,9 @@ Se utilizaron dos corpus:
 * El corpus _resources/LaVanguardia.txt.gz_, una recopilación de noticias del diario La Vanguardia (para feature selection no supervisado)
 
 Se utilizaron las siguientes herramientas:
-* [nltk](http://www.nltk.org/): 
-* [scikit-learn](http://scikit-learn.org/stable/): 
-* [gensim](https://radimrehurek.com/gensim/index.html): 
+* [nltk](http://www.nltk.org/)
+* [scikit-learn](http://scikit-learn.org/stable/)
+* [gensim](https://radimrehurek.com/gensim/index.html)
 
 ## Feature selection supervisado
 
@@ -39,7 +39,7 @@ Para construir la matriz de co-ocurrencias se tuvieron en cuenta los siguientes 
 La técnica de feature selection que se utilizó fue [Wrapper sobre un classificador](http://scikit-learn.org/stable/modules/feature_selection.html#feature-selection-using-selectfrommodel) utilizando [ExtraTreeClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.tree.ExtraTreeClassifier.html).
 
 Se utilizó dos veces, una vez usando los tags POS como clase y la otra usando los sentidos de wordnet cómo clases. Luego
-se realizó la tarea de clustering sobre el espacio reducido.
+se realizó la tarea de clustering sobre el espacio reducido utilizando el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering).
 
 **Wrapper sobre un clasificador con POS como clase**
 
@@ -91,16 +91,39 @@ En el siguiente listado podemos ver algunas palabras de algunos de los clusters 
 
 **Wrapper sobre un clasificador con los sentidos de WordNet como clase**
 
-
 Este caso se puede ejecutar con el siguiente comando:
 	_python -i supervised-feature-selection-wikicorpus.py wordnet-senses_ (asegurar de que el archivo _resources/tagged.es.tgz_ fue descomprimido y que aparece la parte spanishEtiquetado_10000_15000 del corpus)
 
-La matriz original tenía tamaño (106402,17625). Luego de aplicar la técnica de feature selection quedó reducida un tamaño de (106402, 4595).
+La matriz original tenía tamaño (37834, 4569). Luego de aplicar la técnica de feature selection quedó reducida un tamaño de (37834, 1439). 
+
+Notar que en este caso se consideraron solo 37834 palabras por razones de memoria. 
 
 En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes:
 
+	Cluster 1
+	Words: señor, vizconde, bearn, vizcaya, mercaderes, montmartre, vincula, nacería, celuloide, radicados, residiendo, fahrenheit, imposibles, bonsáis, chapuza, derechas, hankey, inducido, hat, títere, sígueme, baxajaun, ubú, moscas, lachambre,
+
 	Cluster 6
-	Words: bizantinos, destruida, conquistada, roma, funda, monasterio, fundó, gobernada, fez, fundada, capturan, asedio, constantinopla, grande, gobernante, córdoba, murcia, abbas, gerona, saqueada, amalfi, conquista, arrasada, incendio, saquea, temporalmente, condado, zaragoza, fundación, destruye, fortaleza, apoderan, zar, cerca, reconquista, histórico, somalia, fundando, reims, antigua, sede, sagrada, saldaña, santa, arrasó, lund, arrasa, praga, nació, kazán, fundaron, afueras, sicilia, tiro, castillo, jerusalén, hangzhou, destruyendo, 
+	Words: capturan, king, st, world, war, the, school, hero, querido, mafioso, wonders, edmund, langley, taza, camerunes, affair, npn, by, art, end, american, way, life, link, condecorado, system, encyclopaedia, mathematics, viral, tinieblas, heart, darkness, hearts, time, or, recording, comparative, analysis, deal, get, kitchen, shaping, encargo, america, alcira, columbus, gold, amgot, soldier,
+
+	Cluster 7
+	Words: sacro, literatura, llamo, galerías, museo, galería, estudió, abstractas, recuerdan, estatuario, exhiben, primitivo, encargando, franz, compartían, degenerado, dell, contemporanea, mondi, possibili, dramático, empezase, importación, rupestre, inspiradas, resalta, mecenas, educacional, colegiata, lrra, albers, essen, levantino, genuino, almanseño, empezo, denonidado, benidictino, valdehuesa, castellanoleonés, contemplan, epipaleolíticas, esquemático,
+
+	Cluster 12
+	Words: última, escalada, destruida, roma, funda, capitular, fundada, capital, gobernante, murcia, conquistar, palermo, amalfi, conquista, sevilla, atacan, fundación, destruye, encomienda, cerca, vikinga, york, reconquista, badajoz, une, burgos, ataca, título, reims, antigua, sede, sagrada, almería, inglesa, arrasó, lund, nació, demografía, kazán, cristiana, allí, fundaron, afueras, llegan,
+
+	Cluster 27
+	Words: muere, intenta, niños, accidente, temporada, morir, cae, brazos, piano, cruzado, golpea, cuerno, pez, aprovecha, llena, cenizas, robo, explota, intestinos, pisoteado, convenció, mata, secuestrado, heredar, muñeca, oso, pega, curiosamente, atrapado, secuestra, juguete, cartman, kyle, apropia, token, kenny, butters, unieran, dolares, salgan, hemorroides, come, defeca, excremento,
+
+	Cluster 30
+	Words: visigodo, españa, deponer, abd, bizantinos, resultando, arzobispo, italia, bizantinas, abren, muhammad, bera, caudillo, francia, zaragoza, entronizado, simancas, proclama, cardeña, monjes, martirizados, códice, independencia, cataluña, arrasa, pobladas, libra, resto, portugal, celebrada, toros, taurina, ejercicio, comarca, montblanc, toledo, afincado, estamento, valencia, 
+
+
+	Cluster 35
+	Words: español, jurista, poeta, chino, obispo, teólogo, médico, filósofo, poetisa, compositora, m, tang, belasco, escritor, religioso, origen, italiana, años, francés, zar, española, alemán, político, japonés, explorador, germánico, ruso, compositor, escritora, danesa, historiador, músico, italiano, irlandés, francesa, serbio, winchester, lobo, informático, argentino, argentina,
+
+	Cluster 37
+	Words: islámico, alí, musulmán, europa, árabe, descubren, grande, enorme, occidental, introduce, erupción, volcánica, otorgado, permitida, sorprende, inteligible, dispersión, moderno, inflexión, cambiado, agudo, perfecto, material, sitios, trabajadores, entero, vendedores, ambientadas, acogida, interpretaciones, mamá, divertido, amazonia, diversidad, comercios, acuarios, selváticas,
 
 
 ## Feature selection no supervisado

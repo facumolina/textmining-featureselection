@@ -17,6 +17,7 @@ WINDOWS_SIZE = 2 # Windows size to determine the contexts
 WORD_CLASS_INDEX = 2 # Use the POS tag as word class by default
 CLUSTERS_NUMBER = 40 # Number of clusters of words
 WORD_INDEX = 0 # Index of words in lines
+MAX_SENTECES = 30000 # Sentences to read
 
 def read_words_in_sentences():
   # Read sentences from CORPUS_FILES
@@ -24,6 +25,7 @@ def read_words_in_sentences():
   files = glob.glob(CORPUS_FILES)
   sentences = []
 
+  i = 0;
   for text in files:
     try:
       with codecs.open(text, 'r', 'latin1') as f:
@@ -33,6 +35,7 @@ def read_words_in_sentences():
         for line in f:
           if "<doc id" in line or len(line)==1: # Doc start
             if (in_sentence):
+              i += 1
               sentences.append(sentence)
             sentence = []
             in_sentence = True
@@ -41,12 +44,15 @@ def read_words_in_sentences():
               in_sentence = False
             else:
               sentence.append(line)
+          if (i==MAX_SENTECES):
+            break
 
     except IOError as exc:
       # Do not fail if a directory is found, just ignore it.
       if exc.errno != errno.EISDIR:
         raise
 
+  print("Total sentences:",len(sentences))
   return sentences
 
 def frequent_words(words_tagged_sentences):
@@ -157,9 +163,10 @@ if __name__ == "__main__":
   class_to_use = sys.argv[1]
   if (class_to_use=="pos"):
     WORD_CLASS_INDEX=2
+    MAX_SENTECES=200000
   if (class_to_use=="wordnet-senses"):
     WORD_CLASS_INDEX=3
-
+    MAX_SENTECES = 30000
 
   sentences = read_words_in_sentences() # Read sentences
 
