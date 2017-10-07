@@ -39,7 +39,7 @@ Para construir la matriz de co-ocurrencias se tuvieron en cuenta los siguientes 
 La técnica de feature selection que se utilizó fue [Wrapper sobre un classificador](http://scikit-learn.org/stable/modules/feature_selection.html#feature-selection-using-selectfrommodel) utilizando [ExtraTreeClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.tree.ExtraTreeClassifier.html).
 
 Se utilizó dos veces, una vez usando los tags POS como clase y la otra usando los sentidos de wordnet cómo clases. Luego
-se realizó la tarea de clustering sobre el espacio reducido utilizando el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering).
+se realizó la tarea de clustering sobre el espacio reducido utilizando el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering) y generando 40 clusters.
 
 **Wrapper sobre un clasificador con POS como clase**
 
@@ -130,8 +130,61 @@ En el siguiente listado podemos ver algunas palabras de algunos de los clusters 
 
 ### Corpus
 
-### Vectorización
+Se utilizó el corpus _resources/LaVanguardia.txt.gz_, una recopilación de noticias del diario La Vanguardia.
+
+### vectorización 
+
+Para normalizar las palabras se dividió el texto en sentencias y para cada sentencia, se creó una lista de tokens utilizando nltk. Luego, para cada lista de tokens
+* todos los tokens fueron expresados en lowercase,
+* se eliminaron los tokens que tenian caracteres no alfabéticos, 
+* se eliminaron las _stopwords_ del lenguaje español (palabras muy frecuentes en el lenguaje que aportan poco valor) definidas en nltk,
+* y finalmente se utilizó un proceso de lematización de cada palabra (determinar el lemma de una palabra dada).
+
+Para vectorizar las palabras se utilizaron word embeddings. Los vectores de palabras se generaron a partir de una implementación de [word2vec](https://en.wikipedia.org/wiki/Word2vec), que aprende vectores para representar las palabras utilizando redes neuronales. 
 
 ### Feature selection
 
+Se utilizaron directamente word embeddings, con el modelo [Word2Vec](https://radimrehurek.com/gensim/models/word2vec.html) de gensim con los siguientes parámetros:
+* _size_: 100 (número de dimensiones del vector)
+* _window_: 5 (distancia máxima entre la palabra a vectorizar y las palabras a su alrededor)
+* _min_count_: 5 (las palabras con menos ocurrencias de este valor son ignoradas)
+
 ### Clustering
+
+Se utilizó el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering) para generar 40 clusters. Este caso se puede ejecutar con el siguiente comando:
+	_python -i unsupervised-feature-selection.py_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
+
+En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes:
+
+	Cluster 4
+	Words: anual, precios, cantidad, equivalente, aplica, automática, sube, indica, pagarán, litros, venta, cubrir, agua, suelo, previsión, pasaje, techo, pérdidas, ciento, mil, abonados, distancia, vender, creciendo, bajada, barato, menor, pescado, aumento, mortalidad, registra, niveles, elevados, datos, promedio, cifra, superior, alcanza, tarjeta, bajará, kilo, habitante, envases,
+
+	Cluster 10
+	Words: ministro, portavoz, piqué, adelantó, aseguró, críticas, nadal, diputado, expresó, recordó, añadió, aprovechó, preguntó, dijo, opinó, respondió, definió, hizo, públicamente, carta, éste, presidente, británico, gabinete, clos, tony, blair, sostiene, reconocido, prensa, miembro, mostró, sorprendido, equipo, popular, votó, socialista, técnico, afirmó, presentara, dimisión, presidido, filas, ex, ruso, contradice, asegura, paeria, sàez, pidió, contestó, socio, alemán, rueda, oficialmente, opina, habló, presidenta, señaló, replicó, vasco, secretario, joseba, ofreció, apuntó, discurso, artículo, defensa, gonzález, vicepresidente
+
+	Cluster 15
+	Words: barcelona, calles, paseo, gràcia, baix, llobregat, plaza, cerdà, metro, centro, cuadrado, calle, hospital, adyacente, respectivamente, aeropuerto, sant, garraf, ferial, restaurante, sala, vino, barrio, sants, peatonal, obras, trinitat, patio, junto, renfe, monasterio, carril, subterráneo, ciudad, distrito, túnel, via, augusta, ronda, dalt, sarrià, edificio, bellvitge, hotel, fachada, cuadrados, parque, art, contará, ubicará, construirá, congresos, situada, autovía, avenida, carretera, ferrocarril, 
+
+	Cluster 18
+	Words: dar, entrar, actuar, paralizar, haber, ser, permitir, resguardarse, verse, cerrar, poner, decir, considerar, ocasionar, utilizar, ir, llegar, fácilmente, negar, pasar, ponerse, sacar, aceptar, curarse, incluir, hacerlo, cliente, ofrecer, descubrir, abrir, hacer, hallar, acceder, continuar, tener, construirse, convertir, manifestarse, pedir, acudir, dialogar, descartar, darse, carecer, soportar, sobresalir, suceder, decidir, regresar, votar, recurrir, exhibir, cinturones, considerarse, encontrar, acabar,
+
+	Cluster 19
+	Words: peajes, congelan, titularidad, revisión, tarifas, empresas, incrementar, sistema, reducción, usuarios, mantenimiento, financiero, prevé, área, metropolitana, mercado, amplia, cuya, interior, mejora, línea, diseño, calidad, uso, producto, usuario, compra, servicio, mejorar, trabajo, mediante, complejo, proyectos, televisión, ifema, información, afecta, cultural, cataluña, realización, potenciar, motor, compañía, espacio, ofrece, gas, movilidad, además, realizado, construcción, creación, histórico,
+
+	Cluster 24
+	Words: hacia, gran, mundo, atracción, frente, española, europa, isla, sur, categoría, norte, bloque, pryca, presencia, guerra, rico, posguerra, españa, frontera, francia, daurada, repúblicas, soviéticas, press, embajada, rusa, rusia, internacional, gigante, creó, pueblo, tradicional, atraviesa, siglo, xxi, americano, país, aragón, cantabria, vive, alemania, origen, extranjero, época, ejército, chino, español, fútbol, japón, oriental, occidental, grecia, andorra, mediterráneo, naciones, islámico, arabia, nacionalidad, alemana, oriente, islámica, marroquí, xx, banco, hispano, colonial, denominación, c, exterminio, unido, países, argelia, france,
+
+	Cluster 25
+	Words: generalitat, marcha, vigor, gobierno, consejo, ministros, aprobó, decreto, apruebe, nuevo, procedimiento, anunciada, administración, marco, ley, psc, reclamó, consenso, pendiente, caso, general, reforma, parte, mantiene, anuncio, nota, pleno, reunión, fira, institución, dirigentes, debate, voto, informe, respecto, finalmente, mesa, retirar, ciu, pp, erc, plan, proyecto, decisión, oposición, medidas, adoptada, programa, orden, municipal, aprobará, modificación, operación, miembros, ayuntamiento, 
+
+	Cluster 30
+	Words: causó, allí, preguntaron, aparece, confesó, recién, cumplidos, dama, arma, mujer, pasión, sentimental, soledad, blanco, raquel, película, bella, quemar, muerte, cabeza, vecino, pequeño, sustituido, cartas, memorias, matrimonio, relato, dejó, abuela, niño, madre, padre, infierno, griterío, emperador, presentaba, hijo, pistola, suceso, llama, pequeña, abandonado, joven, despacho, llorando, resultó, busto, leyenda, llamaba, recuerdo, taxista, aquel, casa, jubilado, falleció, atropellado, atropello, mortal, víctima, encontraba, trabajado, corazón, aleta, niña, hacía, cogió, foto, compañero, acababa, pasó, blanca, lázaro, disco,
+
+	Cluster 32
+	Words: interpretan, criticaban, coincidían, usarlo, agresivas, trazados, integrantes, marcados, desórdenes, comporten, votaron, liberales, gobernantes, gobiernan, reproches, enfermería, deterioradas, granjeros, mimar, explicaban, vecinales, críticos, destacaron, planteaban, pensantes, fotoperiodistas, pacifismo, pacifistas, intervienen, oprimidos, contado, surgieron, feroz, mantendrán, avisos, internacionalmente, salvan, disciplinarios, subcomisión, informales, escépticos, supuestas, facetas, traductores, enmarcan, visuales, retiren, parlamentos, huelgas, inhumanos, contundentes, activamente, sabios, magisterio, brigadas, instruyendo, firmantes, atrevidas, étnicos, insaciables, funcionaron, encargados, desinteresadamente, adhesiones, deducido, radicales, consignas, trataron, diabéticos, pediatras, andaluzas, turoperadores, chantajes, prometieron, estudian, opositores,
+
+	Cluster 33
+	Words: manuel, carmen, prestigioso, escritora, arturo, calvo, escribió, carlos, cristina, otero, bellas, coronel, nicolás, josé, ignacio, director, richard, alonso, balaguer, nombre, autor, rodríguez, garcía, luis, marqués, dolores, figura, alfonso, rey, juan, casado, vázquez, montalbán, escritor, antonia, mercedes, salisachs, juncadella, lópez, robert, àlex, federico, eduardo, sindicalista, pilar, edil, miguel, antoñanzas, serrano, dirigida, escrito, presidió, ramírez, iglesia, joaquín, patiño, comenta,
+
+	Cluster 37
+	Words: ayer, hoy, real, anterior, abril, central, semana, dio, abre, madrid, primera, mañana, llegó, convirtió, puertas, viernes, mediodía, presentación, ciclo, día, mantuvo, abrió, turno, llamada, tarde, vanguardia, estadio, etapa, primero, anteayer, capítulo, abrirá, último, especial, bianual, comenzará, próximo, otoño, próxima, segundo, celebradas, parís, primer, segunda, quinto, puerta, sexto, pasado, noche, miércoles, finalizar, celebra, lunes, exposición, tercero, anoche, jueves, manifestación, acto, noviembre, celebrará, mayo, edición, comienza, enviado, tercer, presenta, lugar, música, ópera, libro, última, teatro, escenario, parada, cuyo, batalla, moscú, asistieron, feria, disputa, comenzó, junio, coincidiendo, italiana, versión, scooter, febrero, certamen, ocasión, danza, puesta, escena, fiesta, domingo, francesa, diciembre, cuarta, sábado, concluirá, celebró, motivo, aniversario, jornada, celebrada, enero, tercera, perdió, llevó, celebraciones, campeonato, deportivo, encuentro, convocado, cita, novedad, celebrado, reunió, martes, cierra, título, clausura, organizado, oro, posteriormente, corte, celebración, puso, pasada, vuelta, culminará, carrera, marzo, gira, inaugura, h, vii, sesión, inauguración, piloto, ceremonia, oficial, honda, londres, consiguió, visita, convocada, ocupa, vi, cumple, conferencia, amsterdam, miss, cerrada, marcó, liceu, término, inició, inauguró, xvi, cena, 
