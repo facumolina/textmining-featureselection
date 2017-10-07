@@ -9,7 +9,7 @@ Encontrar espacios de menor dimensionalidad que mejoren una tarea de PLN, y desp
 ## detalles técnicos
 
 Se utilizaron dos corpus: 
-* El corpus _resources/tagged.es.tgz_, el [Wikicorpus](http://www.cs.upc.edu/~nlp/wikicorpus/) del español taggeado con POS (Part of Spech) y con los sentidos de Wordnet (para feature selection supervisado)
+* El [Wikicorpus](http://www.cs.upc.edu/~nlp/wikicorpus/) del español taggeado con POS (Part of Spech) y con los sentidos de Wordnet (para feature selection supervisado)
 * El corpus _resources/LaVanguardia.txt.gz_, una recopilación de noticias del diario La Vanguardia (para feature selection no supervisado)
 
 Se utilizaron las siguientes herramientas:
@@ -21,7 +21,7 @@ Se utilizaron las siguientes herramientas:
 
 ### Corpus
 
-Se utilizó el corpus _resources/tagged.es.tgz_, el cuál ya viene separado por tokens y lematizados. 
+Se utilizó una porción del corpus [Wikicorpus](http://www.cs.upc.edu/~nlp/wikicorpus/), el cuál ya viene separado por tokens y lematizados.
 
 ### Vectorización
 
@@ -44,7 +44,7 @@ se realizó la tarea de clustering sobre el espacio reducido utilizando el algor
 **Wrapper sobre un clasificador con POS como clase**
 
 Este caso se puede ejecutar con el siguiente comando:
-	_python -i supervised-feature-selection-wikicorpus.py pos_ (asegurar de que el archivo _resources/tagged.es.tgz_ fue descomprimido y que aparece la parte spanishEtiquetado_10000_15000 del corpus)
+	_python -i supervised-feature-selection-wikicorpus.py pos_ (asegurar de que se descargó el archivo _tagged.es.tgz_ desde [Wikicorpus](http://www.cs.upc.edu/~nlp/wikicorpus/) y se descomprimió en la carpeta _resources/_)
 
 La matriz original tenía tamaño (106402,17625). Luego de aplicar la técnica de feature selection quedó reducida un tamaño de (106402, 4595).
 
@@ -95,7 +95,7 @@ En el archivo results/supervisedfsusingpos-clustering.txt se puede ver el output
 **Wrapper sobre un clasificador con los sentidos de WordNet como clase**
 
 Este caso se puede ejecutar con el siguiente comando:
-	_python -i supervised-feature-selection-wikicorpus.py wordnet-senses_ (asegurar de que el archivo _resources/tagged.es.tgz_ fue descomprimido y que aparece la parte spanishEtiquetado_10000_15000 del corpus)
+	_python -i supervised-feature-selection-wikicorpus.py wordnet-senses_ (asegurar de que se descargó el archivo _tagged.es.tgz_ desde [Wikicorpus](http://www.cs.upc.edu/~nlp/wikicorpus/) y se descomprimió en la carpeta _resources/_)
 
 La matriz original tenía tamaño (37834, 4569). Luego de aplicar la técnica de feature selection quedó reducida un tamaño de (37834, 1439). 
 
