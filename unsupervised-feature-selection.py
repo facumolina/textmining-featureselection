@@ -17,6 +17,7 @@ CORPUS_FILE = 'resources/LaVanguardia.txt' # Text to be processed
 CLUSTERS_NUMBER = 40 # Number of clusters of words
 MIN_FREQUENCY = 10  # Min word frequency to be considered
 WINDOWS_SIZE = 2 # Windows size to determine the contexts
+MAX_SENTECES = 30000 # Sentences to read for pca
 
 def readFile():
   # Read the file TEXT_FILE.
@@ -105,7 +106,7 @@ def create_cooccurrence_matrix(sentences,frequent_words):
 
 def unsupervised_fs_pca(vectors):
   print("PCA reduction. Original shape:",vectors.shape)
-  pca = PCA(n_components=100)
+  pca = PCA(n_components=1000)
   vectors = preprocessing.normalize(vectors)
   pca.fit(vectors.todense())
   new_vectors = pca.transform(vectors.todense())
@@ -150,6 +151,7 @@ if __name__ == "__main__":
 
   unsup_method = sys.argv[1]
   if (unsup_method=="pca"):
+    normalized = normalized[:MAX_SENTECES]
     frequent_words = frequent_words(file_content) # Get the most frequent words
     vocabulary, features, vectors = create_cooccurrence_matrix(normalized,frequent_words)
     vectors = unsupervised_fs_pca(vectors)

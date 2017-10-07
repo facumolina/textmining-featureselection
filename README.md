@@ -89,6 +89,9 @@ En el siguiente listado podemos ver algunas palabras de algunos de los clusters 
 	Cluster 39
 	Words: brasil, chile, perú, manaos, colombia, jíbaros, christchurch, reunion, paraguay, aguirre, suárez, corumba, asunción, uruguay, brasilia, panamá, carioca, copacabana, inauguran, bogotá, venezuela, silva, clausuran, saskatoon, tam, bundesliga, copresidida, subsecretario, incae, prefeito, françois, favelas, atraso, canberra, gritó, peugeot, balão, araxá, inclinó, glorias, majestuoso, avianca, undécima, concieto, jacta, florianópolis, varig, recife, pertenencen, crioulo, crioulos, mato, epecies, legalización, pantanal, deudores, comerciando, afrobrasileña, akan, igbo, bordearon, guyana, zimbawe, biologizada,
 
+
+En el archivo results/supervisedfsusingpos-clustering.txt se puede ver el output completo de la ejecución.
+
 **Wrapper sobre un clasificador con los sentidos de WordNet como clase**
 
 Este caso se puede ejecutar con el siguiente comando:
@@ -126,6 +129,9 @@ En el siguiente listado podemos ver algunas palabras de algunos de los clusters 
 	Words: islámico, alí, musulmán, europa, árabe, descubren, grande, enorme, occidental, introduce, erupción, volcánica, otorgado, permitida, sorprende, inteligible, dispersión, moderno, inflexión, cambiado, agudo, perfecto, material, sitios, trabajadores, entero, vendedores, ambientadas, acogida, interpretaciones, mamá, divertido, amazonia, diversidad, comercios, acuarios, selváticas,
 
 
+En el archivo results/supervisedfsusingwordnet-clustering.txt se puede ver el output completo de la ejecución.
+
+
 ## Feature selection no supervisado
 
 ### Corpus
@@ -148,7 +154,9 @@ Se utilizaron dos ténicas de feature selection no supervisado:
 
 **[PCA](http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA)** (Principal Component Analysis) que permite reducción de dimensionalidad utilizando [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular-value_decomposition). Parámetros:
 
-* _n_components_: 100 (número de dimensiones del vector)
+* _n_components_: 1000 (número de dimensiones del vector)
+
+En este caso solamente fueron consideradas 30000 setencias por razones de memoria.
 
 **Word embeddings** con el modelo [Word2Vec](https://radimrehurek.com/gensim/models/word2vec.html) de gensim con los siguientes parámetros:
 * _size_: 100 (número de dimensiones del vector)
@@ -160,15 +168,31 @@ Se utilizaron dos ténicas de feature selection no supervisado:
 Se utilizó el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering) para generar 40 clusters. Para usar PCA se puede ejecutar el siguiente comando:
 	_python -i unsupervised-feature-selection.py pca_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
 
-Mientras que el caso de word embeddings puede ejecutar con el siguiente comando:
+Mientras que para el caso de word embeddings se puede ejecutar con el siguiente comando:
 	_python -i unsupervised-feature-selection.py embeddings_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
 
 
 En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes generados utilizando PCA:
 
 	Cluster 4
-	Words: anual, precios, cantidad, equivalente, aplica, automática, sube, indica, pagarán, litros, venta, cubrir, agua, suelo, previsión, pasaje, techo, pérdidas, ciento, mil, abonados, distancia, vender, creciendo, bajada, barato, menor, pescado, aumento, mortalidad, registra, niveles, elevados, datos, promedio, cifra, superior, alcanza, tarjeta, bajará, kilo, habitante, envases,
-	
+	Words: barcelona, peajes, autopistas, generalitat, ayer, dar, marcha, entrar, vigor, conocer, gobierno, consejo, real, precios, nuevo, actuar, misma, manera, empresas, derecho, incrementar, hacia, me, abril, embargo, sustitución, actual, ministro, portavoz, sistema, sólo, cuenta, evolución, alza, posible, interés, caída, tarea, medida, central, puesto, materia, haber, dado, luz, hecho, semana, nuevas, cierto, numerosas, diversos, única,
+
+	Cluster 6
+	Words: congelados, atrás, después, empezaron, hace, respectivamente, diez, cuarenta, cinco, cuadro, lleva, casi, filosofía, dentro, posadas, profesora, arturo, hombre, mireia, existencia, cumplidos, interesó, conquistar, bárbara, margot, dura, pocos, etapa, do, cliente, tardado, vecino, jóvenes, últimos, tres, tarjeta, seis, cuatro, niñez, primeros, matrimonio, pausa, dinosaurio, vivido, varios, posguerra, abuela, niño, revela,
+
+	Cluster 18
+	Words: josep, bori, fontestà, neus, comerç, puig, pijuan, castellbisbal, alonso, arquitectes, associats, tractament, revalorització, residus, castellvell, soler, cirera, pares, nin, departament, mole, vilanova, geltrú, vendrell, dels, mostra, rubió, ponedors, campanes, àngel, psicopatològica, psicosocial, immigrant, refugiats, de, centre, per, montcada, ricard, el, colector, turisme, tomàs, parcs, jardins, dispuso, convergència, racisme, baeza, mare, unió, joaquim, kari, balbastre, antic, escultures, japó, família, sonor, gurb, osona, riera, soriano, cap,
+
+	Cluster 32
+	Words: llobregat, plaza, hospital, viladecans, gavà, begues, climent, asegurada, cotxeres, roig, andreu, distrito, joan, bosco, vallès, creu, jaume, rubí, originado, votó, pau, antoni, sebastià, crist, salomó, iglesia, martí, quintí, mediona, vilafranca, reus, campanario, jordi, barca, pere, feliu, esplugues, besòs, boi, despí, honorat, comunicaría, saló, comunicaron, gervasi, barraquer, inmediaciones, celoni, televisivos, mudaron, cugat,
+
+	Cluster 34
+	Words: anual, alrededor, mejora, mil, usuario, frente, vale, cifra, pdi, invierta, millones, peseta, presupuesto, hesperia, invertirá, pagar, pensión, millón, piden, valor, ciernes, roba, bajaron, facturas, impagadas, gastos, deuda, gasto, pagado, cuota, total, gastar, gastará, destinan, aportación, acreditativo, llamadas, pagan, anualmente, compensación, precio, tasado, judicialmente, aporta, máximo, cuesta, ración, multas, cobrar,
+
+
+En el archivo results/unsupervisedfs-pca.txt se puede ver output completo de la ejecución.
+
+
 En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes generados utilizando word embeddings:
 
 	Cluster 4
@@ -203,3 +227,7 @@ En el siguiente listado podemos ver algunas palabras de algunos de los clusters 
 
 	Cluster 37
 	Words: ayer, hoy, real, anterior, abril, central, semana, dio, abre, madrid, primera, mañana, llegó, convirtió, puertas, viernes, mediodía, presentación, ciclo, día, mantuvo, abrió, turno, llamada, tarde, vanguardia, estadio, etapa, primero, anteayer, capítulo, abrirá, último, especial, bianual, comenzará, próximo, otoño, próxima, segundo, celebradas, parís, primer, segunda, quinto, puerta, sexto, pasado, noche, miércoles, finalizar, celebra, lunes, exposición, tercero, anoche, jueves, manifestación, acto, noviembre, celebrará, mayo, edición, comienza, enviado, tercer, presenta, lugar, música, ópera, libro, última, teatro, escenario, parada, cuyo, batalla, moscú, asistieron, feria, disputa, comenzó, junio, coincidiendo, italiana, versión, scooter, febrero, certamen, ocasión, danza, puesta, escena, fiesta, domingo, francesa, diciembre, cuarta, sábado, concluirá, celebró, motivo, aniversario, jornada, celebrada, enero, tercera, perdió, llevó, celebraciones, campeonato, deportivo, encuentro, convocado, cita, novedad, celebrado, reunió, martes, cierra, título, clausura, organizado, oro, posteriormente, corte, celebración, puso, pasada, vuelta, culminará, carrera, marzo, gira, inaugura, h, vii, sesión, inauguración, piloto, ceremonia, oficial, honda, londres, consiguió, visita, convocada, ocupa, vi, cumple, conferencia, amsterdam, miss, cerrada, marcó, liceu, término, inició, inauguró, xvi, cena, 
+
+
+En el archivo results/unsupervisedfs-wordembeddings.txt se puede ver output completo de la ejecución.
+
