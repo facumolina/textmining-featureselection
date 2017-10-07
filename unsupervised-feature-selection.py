@@ -9,11 +9,14 @@ from collections import Counter
 from scipy.sparse import coo_matrix
 from sklearn.cluster import KMeans
 from sklearn import preprocessing 
+from sklearn.decomposition import PCA
 from gensim.models import Word2Vec
 import numpy
 
 CORPUS_FILE = 'resources/LaVanguardia.txt' # Text to be processed
 CLUSTERS_NUMBER = 40 # Number of clusters of words
+MIN_FREQUENCY = 10  # Min word frequency to be considered
+WINDOWS_SIZE = 2 # Windows size to determine the contexts
 
 def readFile():
   # Read the file TEXT_FILE.
@@ -58,67 +61,56 @@ def gen_vectors(normalized_text):
   print("Vectors generated")
   return model.wv.vocab,matrix
 
-def frequent_words(sentences):
+def frequent_words(text):
   # Returns the words that appear at least MIN_FREQUENCY times
   print("\nGetting most frequent words")
   
-  words = []
-  for sentence in sentences:
-    for word in sentence:
-      words.append(word.split()[WORD_INDEX])
-
-  words = [token.lower() for token in words if token.isalpha()]
+  words = tokens = nltk.word_tokenize(text)
+  words = [token.lower() for token in words]
+  wnl = nltk.WordNetLemmatizer()
+  words = [wnl.lemmatize(t) for t in words] # Lemmatization
 
   most_frequents = []
   counter = Counter(words)
   for w in counter:
-    if (counter[w]>=MIN_FREQUENCY and w not in stopwords.words('spanish')):
+    if (counter[w]>=MIN_FREQUENCY):
       most_frequents.append(w)
   print("Most frequent words calculated. Total:",str(len(most_frequents)))
   return most_frequents
 
-def create_cooccurrence_matrix_and_target(words_tagged_sentences,frequent_words,class_to_use):
+def create_cooccurrence_matrix(sentences,frequent_words):
   # Create coocurrence matrix. Only create columns for those words that are in frequent_words
-  print("\nCreating co-occurrence matrix using the",class_to_use,"as word class")
+  print("\nCreating co-occurrence matrix")
   set_all_words={}
   set_freq_words={}
-  set_classes={}
   data=[]
   row=[]
   col=[]
-
-  target_data=[]
-  target_row = []
-  target_col=[]
-
-  for sentence in words_tagged_sentences:
-    tokens_and_class = [(w.split()[WORD_INDEX],w.split()[WORD_CLASS_INDEX]) for w in sentence]
-    tokens_and_class = [(token.lower(),tokenclass) for (token,tokenclass) in tokens_and_class if token.isalpha()]  # All alpha tokens to lowercase
-    tokens_and_class = [(token,tokenclass) for (token,tokenclass) in tokens_and_class if token not in stopwords.words('spanish')] # Remove stopwords
-
-    for pos,(token,tokenclass) in enumerate(tokens_and_class):
+  for sentence in sentences:
+    tokens=sentence
+    for pos,token in enumerate(tokens):
       i=set_all_words.setdefault(token,len(set_all_words))
-      c=set_classes.setdefault(tokenclass,len(set_classes))
       start=max(0,pos-WINDOWS_SIZE)
-      end=min(len(tokens_and_class),pos+WINDOWS_SIZE+1)
+      end=min(len(tokens),pos+WINDOWS_SIZE+1)
       for pos2 in range(start,end):
-        token_to_compare = tokens_and_class[pos2][0]
-        if pos2==pos or token_to_compare not in frequent_words:
+        if pos2==pos or tokens[pos2] not in frequent_words:
           continue
-        j=set_freq_words.setdefault(token_to_compare,len(set_freq_words))
+        j=set_freq_words.setdefault(tokens[pos2],len(set_freq_words))
         data.append(1.); row.append(i); col.append(j);
-        if i not in target_row:
-          target_data.append(c); target_row.append(i); target_col.append(0);
-
   cooccurrence_matrix=coo_matrix((data,(row,col)))
-  target_vector = coo_matrix((target_data,(target_row,target_col)))
   print("Vocabulary size:",len(set_all_words))
   print("Matrix shape:",cooccurrence_matrix.shape)
-  print()
-  print("Target shape: ",target_vector.shape)
   print("Co-occurrence matrix finished")
+  return set_all_words,set_freq_words,cooccurrence_matrix
 
-  return set_all_words,set_freq_words,set_classes,cooccurrence_matrix,target_vector.toarray()
+def unsupervised_fs_pca(vectors):
+  print("PCA reduction. Original shape:",vectors.shape)
+  pca = PCA(n_components=100)
+  vectors = preprocessing.normalize(vectors)
+  pca.fit(vectors.todense())
+  new_vectors = pca.transform(vectors.todense())
+  print("Finished feature selection. Shape:",new_vectors.shape)
+  return new_vectors
 
 def gen_clusters(vectors):
   # Generate word clusters using the k-means algorithm.
@@ -152,16 +144,18 @@ def show_results(vocabulary,model):
 if __name__ == "__main__":
 
   file_content = readFile() # Read the CORPUS_FILE
-
   normalized = tokenize(file_content)
+  vocabulary = {}
+  vectors = []
 
-  vocabulary, vectors = gen_vectors(normalized)
-
-  #frequent_words = frequent_words(sentences) # Get the most frequent words
-
-  #vocabulary, features, classes, vectors, target = create_cooccurrence_matrix_and_target(sentences,frequent_words,class_to_use) # Create the co-occurrence matrix
-
-  #new_vectors = feature_selection_from_model(vectors,target) # Perform feature selection from model
+  unsup_method = sys.argv[1]
+  if (unsup_method=="pca"):
+    frequent_words = frequent_words(file_content) # Get the most frequent words
+    vocabulary, features, vectors = create_cooccurrence_matrix(normalized,frequent_words)
+    vectors = unsupervised_fs_pca(vectors)
+  if (unsup_method=="embeddings"):
+    vocabulary, vectors = gen_vectors(normalized)
+    
 
   km_model = gen_clusters(vectors) # Generate clusters
 

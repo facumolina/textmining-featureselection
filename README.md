@@ -144,17 +144,32 @@ Para vectorizar las palabras se utilizaron word embeddings. Los vectores de pala
 
 ### Feature selection
 
-Se utilizaron directamente word embeddings, con el modelo [Word2Vec](https://radimrehurek.com/gensim/models/word2vec.html) de gensim con los siguientes parámetros:
+Se utilizaron dos ténicas de feature selection no supervisado: 
+
+**[PCA](http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html#sklearn.decomposition.PCA)** (Principal Component Analysis) que permite reducción de dimensionalidad utilizando [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular-value_decomposition). Parámetros:
+
+* _n_components_: 100 (número de dimensiones del vector)
+
+**Word embeddings** con el modelo [Word2Vec](https://radimrehurek.com/gensim/models/word2vec.html) de gensim con los siguientes parámetros:
 * _size_: 100 (número de dimensiones del vector)
 * _window_: 5 (distancia máxima entre la palabra a vectorizar y las palabras a su alrededor)
 * _min_count_: 5 (las palabras con menos ocurrencias de este valor son ignoradas)
 
 ### Clustering
 
-Se utilizó el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering) para generar 40 clusters. Este caso se puede ejecutar con el siguiente comando:
-	_python -i unsupervised-feature-selection.py_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
+Se utilizó el algoritmo [K-means](https://en.wikipedia.org/wiki/K-means_clustering) para generar 40 clusters. Para usar PCA se puede ejecutar el siguiente comando:
+	_python -i unsupervised-feature-selection.py pca_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
 
-En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes:
+Mientras que el caso de word embeddings puede ejecutar con el siguiente comando:
+	_python -i unsupervised-feature-selection.py embeddings_ (asegurar de que el archivo _resources/LaVanguardia.txt.gz_ fue descomprimido y que aparece el corpus LaVanguardia.txt)
+
+
+En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes generados utilizando PCA:
+
+	Cluster 4
+	Words: anual, precios, cantidad, equivalente, aplica, automática, sube, indica, pagarán, litros, venta, cubrir, agua, suelo, previsión, pasaje, techo, pérdidas, ciento, mil, abonados, distancia, vender, creciendo, bajada, barato, menor, pescado, aumento, mortalidad, registra, niveles, elevados, datos, promedio, cifra, superior, alcanza, tarjeta, bajará, kilo, habitante, envases,
+	
+En el siguiente listado podemos ver algunas palabras de algunos de los clusters más interesantes generados utilizando word embeddings:
 
 	Cluster 4
 	Words: anual, precios, cantidad, equivalente, aplica, automática, sube, indica, pagarán, litros, venta, cubrir, agua, suelo, previsión, pasaje, techo, pérdidas, ciento, mil, abonados, distancia, vender, creciendo, bajada, barato, menor, pescado, aumento, mortalidad, registra, niveles, elevados, datos, promedio, cifra, superior, alcanza, tarjeta, bajará, kilo, habitante, envases,
